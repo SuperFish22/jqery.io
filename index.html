@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Receiver</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Send JSON Data</h1>
+    <form id="myForm">
+        <label for="jsonInput">JSON Data:</label>
+        <textarea id="jsonInput" name="jsonInput" required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Received Data:</h2>
+    <pre id="response"></pre>
+
+    <script>
+        $(document).ready(function() {
+            $('#myForm').on('submit', function(event) {
+                event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+                const jsonData = $('#jsonInput').val(); // Получаем JSON из текстовой области
+
+                $.ajax({
+                    url: '/submit', // URL, на который отправляем данные
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: jsonData, // Отправляем JSON
+                    success: function(response) {
+                        $('#response').text(JSON.stringify(response, null, 2)); // Отображаем ответ от сервера
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                        $('#response').text('An error occurred while sending data.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    {% if data %}
+    <h2>Received Data:</h2>
+    <pre>{{ data | tojson(indent=2) }}</pre>
+    {% endif %}
+</body>
+</html>
